@@ -1,3 +1,6 @@
+'use strict';
+
+
 var my_news = [
     {
         author: 'Саша Печкин',
@@ -18,8 +21,9 @@ var my_news = [
                   нужно прочитать очень длинное \
                   лицензионное соглашение'
     }
-]
+];
 
+window.ee = new EventEmitter();
 
 var Article = React.createClass({
     propTypes: {
@@ -114,10 +118,22 @@ var Add = React.createClass({
     },
     onButtonClick: function(e) {
         e.preventDefault();
+        var textEl = ReactDOM.findDOMNode(this.refs.text);
         var author = ReactDOM.findDOMNode(this.refs.author).value;
-        var text = ReactDOM.findDOMNode(this.refs.text).value;
-        console.log('author:', author);
-        console.log('text:', text);
+        var text = textEl.value;
+
+        var item = [
+            {
+                author: author,
+                text: text,
+                bigText: '...'
+            }
+        ];
+
+        window.ee.emit('News.add', item);
+
+        textEl.value = '';
+        this.setState({textFill: false});
     },
     onCheckRuleClick: function(e) {
         this.setState({checkRule: !this.state.checkRule});
@@ -162,7 +178,7 @@ var Add = React.createClass({
                     ref='alert_button'
                     disabled={!this.state.checkRule || !this.state.authorFill || !this.state.textFill}
                 >
-                    Отправить
+                    Добавить новость
                 </button>
             </form>
         )
@@ -170,12 +186,28 @@ var Add = React.createClass({
 });
 
 var App = React.createClass({
+    getInitialState: function() {
+        return {
+            news: my_news
+        }
+    },
+    componentDidMount: function() {
+        var self = this;
+        window.ee.addListener('News.add', function(item){
+            var nextNews = item.concat(self.state.news);
+            self.setState({news: nextNews});
+        });
+    },
+    componentWillUnmoun: function() {
+        window.ee.removeListener('News.add');
+    },
     render: function() {
+        console.log('render');
         return (
             <div className="app">
-                <h3>Новости</h3>
                 <Add />
-                <News data={my_news} />
+                <h3>Новости</h3>
+                <News data={this.state.news} />
             </div>
         );
     }
