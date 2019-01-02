@@ -102,6 +102,9 @@ var News = React.createClass({
 });
 
 var TestInput = React.createClass({
+    componentDidMount: function() {
+        ReactDOM.findDOMNode(this.refs.myTestInput).focus();
+    },
     onButtonClick: function() {
         console.log(this.refs);
         console.log('Send input:', ReactDOM.findDOMNode(this.refs.myTestInput).value);
@@ -109,10 +112,12 @@ var TestInput = React.createClass({
     render: function() {
         return (
             <div>
-                <input className='test-input' 
+                <input
+                    className='test-input' 
                     defaultValue='' 
                     placeholder='введите значение'
-                    ref='myTestInput'/>
+                    ref='myTestInput'
+                />
                 <button type="button"
                     onClick={this.onButtonClick}
                     ref='alert_button'
