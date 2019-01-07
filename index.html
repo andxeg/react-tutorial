@@ -165,39 +165,30 @@
             };
 
             class TestInput extends React.Component {
-                state = {
-                    value: ''
-                }
-                onChange = (e) => {
-                    e.preventDefault();
-                    this.setState(
-                        {value: e.currentTarget.value},
-                        () => {
-                            console.log(this.state.value);
-                        }
-                    )
+                constructor(props) {
+                    super(props);
+                    this.input = React.createRef();
                 }
 
                 onClickButton = (e) => {
                     e.preventDefault();
-                    console.log("value: ", this.state.value);
+                    console.log("value: ", this.input.current.value);
                 }
 
                 render() {
-                    const { value } = this.state;
-
                     return (
-                        <form>
+                        <React.Fragment>
                             <input className='test-input' 
-                            onChange={this.onChange}
-                            value={value}
-                            placeholder='введите значение'/>
+                            defaultValue=''
+                            placeholder='введите значение'
+                            ref={this.input}
+                            />
                             <button
                             onClick={this.onClickButton}
                             >
                                 Послать
                             </button>
-                        </form>
+                        </React.Fragment>
                     )
                 }
             };
