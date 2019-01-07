@@ -41,9 +41,14 @@
                 text-decoration: underline;
                 color: #007DDC;
             }
+
             .news__count {
                 margin: 10px 0 0 0;
                 display: block;
+            }
+
+            .test-input {
+                marging: 0 5px 5px 0;
             }
         </style>
     </head>
@@ -137,35 +142,19 @@
                     return newsTemplate;
                 }
 
-                state = {
-                    counter: 0
-                }
-
-                onClick = (e) => {
-                    e.preventDefault();
-                    this.setState({
-                        counter: ++this.state.counter
-                    });
-                }
-
                 render() {
                     const {data} = this.props;
-                    const { counter } = this.state;
 
                     return (
                         <div className="news">
                             {this.renderNews()}
                             {
                                 data.length ?
-                                <strong
-                                onClick={this.onClick}>
+                                <strong>
                                 Всего новостей: {data.length}
                                 </strong>:
                                 null
                             }
-                            <div>
-                                <strong> Всего кликов: {counter} </strong>
-                            </div>
                         </div>
                     );
                 }                    
@@ -175,9 +164,48 @@
                 data: PropTypes.array.isRequired
             };
 
+            class TestInput extends React.Component {
+                state = {
+                    value: ''
+                }
+                onChange = (e) => {
+                    e.preventDefault();
+                    this.setState(
+                        {value: e.currentTarget.value},
+                        () => {
+                            console.log(this.state.value);
+                        }
+                    )
+                }
+
+                onClickButton = (e) => {
+                    e.preventDefault();
+                    console.log("value: ", this.state.value);
+                }
+
+                render() {
+                    const { value } = this.state;
+
+                    return (
+                        <form>
+                            <input className='test-input' 
+                            onChange={this.onChange}
+                            value={value}
+                            placeholder='введите значение'/>
+                            <button
+                            onClick={this.onClickButton}
+                            >
+                                Послать
+                            </button>
+                        </form>
+                    )
+                }
+            };
+
             const App = () => {
                 return (
                     <React.Fragment>
+                        <TestInput />
                         <h3>Новости</h3>
                         <News data={myNews}/>
                     </React.Fragment>
