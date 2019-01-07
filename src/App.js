@@ -23,6 +23,25 @@ class App extends React.Component {
             });
     }
 
+    static getDerivedStateFromProps(props, state) {
+        let nextFilteredNews = null;
+
+        if (Array.isArray(state.news)) {
+            nextFilteredNews = [...state.news];
+            nextFilteredNews.forEach((item, index) => {
+                if (item.bigText.toLowerCase().indexOf('pubg') !== -1) {
+                    item.bigText = 'СПАМ';
+                }
+            })
+
+            return {
+                news: nextFilteredNews,
+            }
+        }
+
+        return null;
+    }
+
     handleAddNews = (data) => {
         const nextNews = [data, ...this.state.news];
         this.setState({news: nextNews});

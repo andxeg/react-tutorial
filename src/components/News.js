@@ -4,27 +4,12 @@ import { Article } from './Article'
 
 
 class News extends React.Component {
-    state = {
-        filteredNews: this.props.data
-    }
-
-    componentWillReceiveProps(nextProps) {
-        let nextFilteredNews = [...nextProps.data];
-        nextFilteredNews.forEach((item, index) => {
-            if (item.bigText.toLowerCase().indexOf('pubg') !== -1 ) {
-                item.bigText = 'СПАМ';
-            }
-        });
-
-        this.setState({filteredNews: nextFilteredNews});
-    }
-
     renderNews = () => {
-        const {filteredNews} = this.state; // аналогично const data = this.props.data
+        const {data} = this.props; // аналогично const data = this.props.data
         let newsTemplate = null;
 
-        if (filteredNews.length > 0) {
-            newsTemplate = filteredNews.map(function(item) {
+        if (data.length > 0) {
+            newsTemplate = data.map(function(item) {
                 return <Article key={item.id} data={item}/>
             });
         } else {
@@ -35,15 +20,15 @@ class News extends React.Component {
     }
 
     render() {
-        const {filteredNews} = this.state;
+        const { data } = this.props;
 
         return (
             <div className="news">
                 {this.renderNews()}
                 {
-                    filteredNews.length ?
+                    data.length ?
                     <strong>
-                    Всего новостей: {filteredNews.length}
+                    Всего новостей: {data.length}
                     </strong>:
                     null
                 }
