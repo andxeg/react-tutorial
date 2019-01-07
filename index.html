@@ -16,7 +16,7 @@
             }
 
             .none {
-                display: none;
+                display: none !important;
             }
 
             body {
@@ -49,6 +49,38 @@
 
             .test-input {
                 marging: 0 5px 5px 0;
+            }
+
+            .add {
+                margin: 0 5px 5px 0;
+                width: 210px;
+                border: 1px dashed rgba(0, 89, 181, 0.82);
+                padding: 5px;
+            }
+
+            .add__author, .add__text, .add__btn, .add__checkrule {
+                display: block;
+                margin: 0 0 5px 0;
+                padding: 5px;
+                width: 94%;
+                border: 1px solid rgba(0, 89, 181, 0.82);
+            }
+
+            .add__checkrule {
+                border: none;
+                font-size: 12px;
+            }
+
+            .add__btn {
+                box-sizing: content-box;
+                color: #FFF;
+                text-transform: uppercase;
+                background: #007DDC;
+            }
+
+            .add__btn:disabled {
+                background: #CCC;
+                color: #999;
             }
         </style>
     </head>
@@ -88,15 +120,11 @@
                 }
                 onClickHander = (e) => {
                     e.preventDefault();
-                    this.setState({visible: !this.state.visible}, () => {
-                        console.log('State was changed');
-                    });
+                    this.setState({visible: !this.state.visible});
                 }
                 render() {
                     const { author, text, bigText } = this.props.data;
                     const { visible } = this.state;
-
-                    console.log('Article was rerendered');
 
                     return (
                         <div className="article">
@@ -164,31 +192,75 @@
                 data: PropTypes.array.isRequired
             };
 
-            class TestInput extends React.Component {
+            class Add extends React.Component {
                 constructor(props) {
                     super(props);
                     this.input = React.createRef();
                 }
 
+                state = {
+                    author: '',
+                    text: '',
+                    agree: false
+                }
+
+                handleChange = (e) => {
+                    const { id, value } = e.currentTarget;
+                    this.setState({[id]: value});
+                }
+
                 onClickButton = (e) => {
                     e.preventDefault();
-                    console.log("value: ", this.input.current.value);
+                    console.log("author: ", this.state.author);
+                    console.log("text: ", this.state.text);
+                }
+
+                onRuleChange = (e) => {
+                    this.setState({agree: e.currentTarget.checked});
+                }
+
+                validate = () => {
+                    return !(!this.state.agree || 
+                           !this.state.author.trim() || 
+                           !this.state.text.trim())
                 }
 
                 render() {
+                    const { author, text, agree } = this.state;
+
                     return (
-                        <React.Fragment>
-                            <input className='test-input' 
-                            defaultValue=''
-                            placeholder='введите значение'
-                            ref={this.input}
+                        <form className='add'>
+                            <input
+                            id='author'
+                            type='text'
+                            onChange={this.handleChange}
+                            className='add__author' 
+                            placeholder='Ваше имя'
+                            value={author}
                             />
+                            <textarea
+                            id='text'
+                            onChange={this.handleChange}
+                            className='add__text'
+                            placeholder='Текст новости'
+                            value={text}
+                            ></textarea>
+                            <label
+                            className='add__checkrule'>
+                                <input
+                                type='checkbox'
+                                onChange={this.onRuleChange}
+                                />
+                                Я согласен с правилами
+                            </label>
                             <button
+                            className='add__btn'
                             onClick={this.onClickButton}
+                            disabled={!this.validate()}
                             >
-                                Послать
+                                Добавить новость
                             </button>
-                        </React.Fragment>
+                        </form>
                     )
                 }
             };
@@ -196,7 +268,7 @@
             const App = () => {
                 return (
                     <React.Fragment>
-                        <TestInput />
+                        <Add />
                         <h3>Новости</h3>
                         <News data={myNews}/>
                     </React.Fragment>
